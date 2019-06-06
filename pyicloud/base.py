@@ -23,7 +23,8 @@ from pyicloud.services import (
     ContactsService,
     RemindersService,
     PhotosService,
-    AccountService
+    AccountService,
+    DiskService
 )
 from pyicloud.utils import get_password_from_keyring
 
@@ -71,7 +72,7 @@ class PyiCloudSession(requests.Session):
         json_mimetypes = ['application/json', 'text/json']
 
         if not response.ok and content_type not in json_mimetypes:
-            self._raise_error(response.status_code, response.reason)
+            self._raise_error(response.url, response.status_code, response.reason)
 
         if content_type not in json_mimetypes:
             return response
@@ -84,27 +85,28 @@ class PyiCloudSession(requests.Session):
 
         logger.debug(json)
 
-        reason = json.get('errorMessage')
-        reason = reason or json.get('reason')
-        reason = reason or json.get('errorReason')
-        if not reason and isinstance(json.get('error'), six.string_types):
-            reason = json.get('error')
-        if not reason and json.get('error'):
-            reason = "Unknown reason"
+        if isinstance(json, dict):
+            reason = json.get('errorMessage')
+            reason = reason or json.get('reason')
+            reason = reason or json.get('errorReason')
+            if not reason and isinstance(json.get('error'), six.string_types):
+                reason = json.get('error')
+            if not reason and json.get('error'):
+                reason = "Unknown reason"
 
-        code = json.get('errorCode')
-        if not code and json.get('serverErrorCode'):
-            code = json.get('serverErrorCode')
+            code = json.get('errorCode')
+            if not code and json.get('serverErrorCode'):
+                code = json.get('serverErrorCode')
 
-        if reason:
-            self._raise_error(code, reason)
+            if reason:
+                self._raise_error(response.url, code, reason)
 
         return response
 
-    def _raise_error(self, code, reason):
+    def _raise_error(self, url, code, reason):
         if self.service.requires_2sa and \
                 reason == 'Missing X-APPLE-WEBAUTH-TOKEN cookie':
-            raise PyiCloud2SARequiredError(response.url)
+            raise PyiCloud2SARequiredError(url)
         if code == 'ZONE_NOT_FOUND' or code == 'AUTHENTICATION_FAILED':
             reason = 'Please log into https://icloud.com/ to manually ' \
                 'finish setting up your iCloud service'
@@ -337,6 +339,15 @@ class PyiCloudService(object):
     def calendar(self):
         service_root = self.webservices['calendar']['url']
         return CalendarService(service_root, self.session, self.params)
+
+    @property
+    def disk(self):
+        if not hasattr(self, '_disk'):
+            self._disk = DiskService(self.webservices['drivews']['url'],
+                           self.webservices['docws']['url'] ,
+                           self.session,
+                           self.params).files()
+        return self._disk
 
     @property
     def contacts(self):
