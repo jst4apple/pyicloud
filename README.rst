@@ -278,42 +278,58 @@ Disk Library
 =======================
 >>> root = api.disk
 
-#can show the file list
->>>root.list()
-.
-+-----------+---------+-------------+----------------+------------+--------------+-------------+--------------+
-| name      | _FILEID | type        | fileCount/size | dateCreate | lastOpenTime | dateChanged | dateModified |
-+-----------+---------+-------------+----------------+------------+--------------+-------------+--------------+
-| Assembly  | 1       | APP_LIBRARY |                |            |              |             |              |
-| Desktop   | 2       | FOLDER      |                |            |              |             |              |
-| Documents | 3       | FOLDER      |                |            |              |             |              |
-| Numbers   | 4       | APP_LIBRARY |                |            |              |             |              |
-| Pages     | 5       | APP_LIBRARY |                |            |              |             |              |
-| python    | 6       | FOLDER      | 7              |            |              |             |              |
-| Shortcuts | 7       | APP_LIBRARY |                |            |              |             |              |
-+-----------+---------+-------------+----------------+------------+--------------+-------------+--------------+
+can show the file list
 
-#can access the fold/files by name/_FILEID of the list
+``>>>root.list()``
+
+::
+
+  .
+  +-----------+---------+-------------+----------------+------------+--------------+
+  | name      | _FILEID | type        | fileCount/size | dateCreate | lastOpenTime |
+  +-----------+---------+-------------+----------------+------------+--------------+
+  | Assembly  | 1       | APP_LIBRARY |                |            |              |
+  | Desktop   | 2       | FOLDER      |                |            |              |
+  | Documents | 3       | FOLDER      |                |            |              |
+  | Numbers   | 4       | APP_LIBRARY |                |            |              |
+  | Pages     | 5       | APP_LIBRARY |                |            |              |
+  | python    | 6       | FOLDER      | 7              |            |              |
+  | Shortcuts | 7       | APP_LIBRARY |                |            |              |
+  +-----------+---------+-------------+----------------+------------+--------------+
+
+
+can access the fold/files by name/_FILEID of the list
+
 >>>root['python'].list() same as root[6].list()
-./python
-+--------+---------+--------+----------------+------------+--------------+-------------+--------------+
-| name   | _FILEID | type   | fileCount/size | dateCreate | lastOpenTime | dateChanged | dateModified |
-+--------+---------+--------+----------------+------------+--------------+-------------+--------------+
-| coscmd | 1       | FOLDER | 7              |            |              |             |              |
-+--------+---------+--------+----------------+------------+--------------+-------------+--------------+
 
-#download the file of the FOLD/FILE 
-#first arg is the name or index of the FILE/FOLD
-#you can pass/or not second arg of localpath to indicate where to store
-root[name or index of file].download(name or index of file)
-root['python'].download(1) or root['python'].download('coscmd')  or root[6].download('coscmd') 
 
-#createfold 
-root['python'].createfold(name)
+::
 
-#upload the file of the FILE 
-root['python'].upload(localpath)
+  ./python
+  +--------+---------+--------+----------------+------------+--------------+
+  | name   | _FILEID | type   | fileCount/size | dateCreate | lastOpenTime |
+  +--------+---------+--------+----------------+------------+--------------+
+  | coscmd | 1       | FOLDER | 7              |            |              |
+  +--------+---------+--------+----------------+------------+--------------+
 
-#remove file
-root['python'].remove(name or index of file)
+
+can download the file of the FOLD/FILE 
+first arg is the name or index of the FILE/FOLD,you can pass/or not second arg of localpath to indicate where to store
+
+
+>>>root[name or index of file].download(name or index of file)
+>>>root['python'].download(1) or root['python'].download('coscmd')  or root[6].download('coscmd') 
+
+
+can createfold 
+
+>>>root['python'].createfold(name)
+
+
+can upload the file of the FILE 
+>>>root['python'].upload(localpath)
+
+
+can remove file
+>>>root['python'].remove(name or index of file)
 
