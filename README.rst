@@ -271,3 +271,49 @@ To download a specific version of the photo asset, pass the version to ``downloa
 >>> download = photo.download('thumb')
 >>> with open(photo.versions['thumb'].filename, 'wb') as thumb_file:
         thumb_file.write(download.raw.read())
+
+
+=======================
+Disk Library
+=======================
+>>> root = api.disk
+
+#can show the file list
+>>>root.list()
+.
++-----------+---------+-------------+----------------+------------+--------------+-------------+--------------+
+| name      | _FILEID | type        | fileCount/size | dateCreate | lastOpenTime | dateChanged | dateModified |
++-----------+---------+-------------+----------------+------------+--------------+-------------+--------------+
+| Assembly  | 1       | APP_LIBRARY |                |            |              |             |              |
+| Desktop   | 2       | FOLDER      |                |            |              |             |              |
+| Documents | 3       | FOLDER      |                |            |              |             |              |
+| Numbers   | 4       | APP_LIBRARY |                |            |              |             |              |
+| Pages     | 5       | APP_LIBRARY |                |            |              |             |              |
+| python    | 6       | FOLDER      | 7              |            |              |             |              |
+| Shortcuts | 7       | APP_LIBRARY |                |            |              |             |              |
++-----------+---------+-------------+----------------+------------+--------------+-------------+--------------+
+
+#can access the fold/files by name/_FILEID of the list
+>>>root['python'].list() same as root[6].list()
+./python
++--------+---------+--------+----------------+------------+--------------+-------------+--------------+
+| name   | _FILEID | type   | fileCount/size | dateCreate | lastOpenTime | dateChanged | dateModified |
++--------+---------+--------+----------------+------------+--------------+-------------+--------------+
+| coscmd | 1       | FOLDER | 7              |            |              |             |              |
++--------+---------+--------+----------------+------------+--------------+-------------+--------------+
+
+#download the file of the FOLD/FILE 
+#first arg is the name or index of the FILE/FOLD
+#you can pass/or not second arg of localpath to indicate where to store
+root[name or index of file].download(name or index of file)
+root['python'].download(1) or root['python'].download('coscmd')  or root[6].download('coscmd') 
+
+#createfold 
+root['python'].createfold(name)
+
+#upload the file of the FILE 
+root['python'].upload(localpath)
+
+#remove file
+root['python'].remove(name or index of file)
+
